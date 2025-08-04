@@ -1,4 +1,4 @@
-// App.js
+// App.js - Mobile-Friendly Version
 import React, { useReducer, useState, useEffect } from 'react';
 import './index.css';
 
@@ -68,19 +68,10 @@ const getRandomCategories = (totalCategories = 4) => {
   const anniversaryCategory = allCategories.find(cat => cat.isAnniversary);
   const otherCategories = allCategories.filter(cat => !cat.isAnniversary);
   
-  // Randomly select (totalCategories - 1) from other categories
   const shuffledOthers = [...otherCategories].sort(() => Math.random() - 0.5);
   const selectedOthers = shuffledOthers.slice(0, totalCategories - 1);
   
-  // Combine anniversary with randomly selected others
   return [anniversaryCategory, ...selectedOthers];
-};
-
-// Game Data - now dynamically generated
-const gameData = {
-  get categories() {
-    return getRandomCategories(4);
-  }
 };
 
 // Utility Functions
@@ -93,7 +84,6 @@ const shuffleWords = (categories) => {
 
 // Game State Hook
 const useGameState = () => {
-  // Generate categories once when component initializes
   const [gameCategories] = useState(() => getRandomCategories(4));
   
   const initialState = {
@@ -146,7 +136,6 @@ const useGameState = () => {
         const newSolvedCategories = [...state.solvedCategories, category];
         const isGameComplete = newSolvedCategories.length === state.categories.length;
         
-        // Check if ANY solved category is an anniversary category
         const hasAnniversaryCategory = newSolvedCategories.some(cat => cat.isAnniversary);
         
         return {
@@ -221,7 +210,7 @@ const useGameState = () => {
   };
 };
 
-// Confetti Component
+// Mobile-Friendly Confetti Component
 const Confetti = ({ show, onComplete }) => {
   useEffect(() => {
     if (show) {
@@ -236,7 +225,7 @@ const Confetti = ({ show, onComplete }) => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {[...Array(50)].map((_, i) => (
+      {[...Array(30)].map((_, i) => (
         <div
           key={i}
           className="absolute animate-confetti"
@@ -247,7 +236,7 @@ const Confetti = ({ show, onComplete }) => {
           }}
         >
           <div 
-            className={`w-3 h-3 ${
+            className={`w-2 h-2 sm:w-3 sm:h-3 ${
               ['bg-yellow-400', 'bg-pink-400', 'bg-blue-400', 'bg-green-400', 'bg-purple-400'][Math.floor(Math.random() * 5)]
             } rotate-45`}
           />
@@ -257,17 +246,17 @@ const Confetti = ({ show, onComplete }) => {
   );
 };
 
-// Progress Bar Component
+// Mobile-Friendly Progress Bar Component
 const ProgressBar = ({ current, total }) => {
   const percentage = (current / total) * 100;
   
   return (
-    <div className="w-full mb-8">
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-lg font-semibold text-gray-700">Progress</span>
-        <span className="text-lg font-semibold text-gray-700">{current}/{total}</span>
+    <div className="w-full mb-4 sm:mb-8">
+      <div className="flex justify-between items-center mb-2 sm:mb-3">
+        <span className="text-base sm:text-lg font-semibold text-gray-700">Progress</span>
+        <span className="text-base sm:text-lg font-semibold text-gray-700">{current}/{total}</span>
       </div>
-      <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+      <div className="h-2 sm:h-3 bg-gray-200 rounded-full overflow-hidden">
         <div 
           className="h-full bg-gradient-to-r from-pink-400 to-purple-500 rounded-full transition-all duration-700 ease-out"
           style={{ width: `${percentage}%` }}
@@ -277,30 +266,30 @@ const ProgressBar = ({ current, total }) => {
   );
 };
 
-// Header Component
+// Mobile-Friendly Header Component
 const Header = ({ mistakes, solvedCount, totalCategories }) => {
   const heartsRemaining = 4 - mistakes;
   
   return (
-    <div className="text-center mb-8">
-      <div className="mb-6">
+    <div className="text-center mb-4 sm:mb-8 px-2">
+      <div className="mb-4 sm:mb-6">
         <img 
           src="Connected.png" 
           alt="Our Anniversary Connections" 
-          className="max-w-96 h-auto mx-auto rounded-lg "
+          className="max-w-64 sm:max-w-80 md:max-w-96 h-auto mx-auto rounded-lg"
         />
       </div>
-      <p className="text-xl text-gray-600 mb-6 max-w-prose mx-auto">
+      <p className="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6 max-w-prose mx-auto px-4">
         Find groups of four related words
       </p>
       
       <ProgressBar current={solvedCount} total={totalCategories} />
       
-      <div className="flex justify-center space-x-2 mb-4">
+      <div className="flex justify-center space-x-2 mb-3 sm:mb-4">
         {[...Array(4)].map((_, i) => (
           <span 
             key={i} 
-            className={`text-2xl transition-all duration-300 ${
+            className={`text-xl sm:text-2xl transition-all duration-300 ${
               i < heartsRemaining 
                 ? 'text-red-500' 
                 : 'text-gray-300'
@@ -312,7 +301,7 @@ const Header = ({ mistakes, solvedCount, totalCategories }) => {
       </div>
       
       {mistakes > 0 && (
-        <p className="text-lg text-red-600 font-medium">
+        <p className="text-base sm:text-lg text-red-600 font-medium">
           {4 - mistakes} mistake{4 - mistakes !== 1 ? 's' : ''} remaining
         </p>
       )}
@@ -320,23 +309,23 @@ const Header = ({ mistakes, solvedCount, totalCategories }) => {
   );
 };
 
-// WordCard Component - Whole word wrapping
+// Mobile-Friendly WordCard Component
 const WordCard = ({ word, isSelected, isDisabled, onClick, showShake }) => {
   return (
     <button
       className={`
-        min-h-20 md:min-h-24 w-full flex items-center justify-center
-        rounded-xl font-bold p-3
-        transition-all duration-300 ease-in-out
-        transform hover:scale-105 active:scale-95
-        focus:outline-none focus:ring-4 focus:ring-blue-400
-        shadow-lg hover:shadow-xl
-        text-sm md:text-base lg:text-lg
+        min-h-16 sm:min-h-20 md:min-h-24 w-full flex items-center justify-center
+        rounded-lg sm:rounded-xl font-bold p-2 sm:p-3
+        transition-all duration-200 ease-in-out
+        transform active:scale-95 touch-manipulation
+        focus:outline-none focus:ring-2 focus:ring-blue-400
+        shadow-md hover:shadow-lg
+        text-xs sm:text-sm md:text-base
         ${isSelected 
           ? 'bg-gradient-to-br from-blue-400 to-blue-600 text-white border-2 border-blue-700' 
-          : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 text-gray-800 hover:from-gray-100 hover:to-gray-200'
+          : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-300 text-gray-800'
         }
-        ${isDisabled ? 'opacity-50 cursor-not-allowed hover:scale-100' : 'cursor-pointer'}
+        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${showShake ? 'animate-shake' : ''}
       `}
       onClick={onClick}
@@ -358,21 +347,17 @@ const WordCard = ({ word, isSelected, isDisabled, onClick, showShake }) => {
   );
 };
 
-
-
-
-
-// SelectedWordsBar Component
+// Mobile-Friendly SelectedWordsBar Component
 const SelectedWordsBar = ({ selectedWords }) => {
   if (selectedWords.length === 0) return null;
 
   return (
-    <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200">
-      <div className="flex flex-wrap justify-center gap-3">
+    <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl border-2 border-blue-200">
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {selectedWords.map(word => (
           <span 
             key={word}
-            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full text-lg font-semibold shadow-md"
+            className="px-3 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full text-sm sm:text-lg font-semibold shadow-md"
           >
             {word}
           </span>
@@ -382,24 +367,24 @@ const SelectedWordsBar = ({ selectedWords }) => {
   );
 };
 
-// ActionButtons Component
+// Mobile-Friendly ActionButtons Component
 const ActionButtons = ({ gameState }) => {
   return (
-    <div className="flex flex-wrap gap-4 justify-center">
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
       <button
-        className="px-8 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl font-semibold text-lg
-                   hover:from-gray-500 hover:to-gray-600 transition-all duration-300 transform hover:scale-105
-                   focus:outline-none focus:ring-4 focus:ring-gray-400 shadow-lg hover:shadow-xl"
+        className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg
+                   active:from-gray-500 active:to-gray-600 transition-all duration-200 transform active:scale-95
+                   focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-lg touch-manipulation"
         onClick={() => gameState.dispatch({ type: 'SHUFFLE_WORDS' })}
       >
         🔄 Shuffle
       </button>
       
       <button
-        className="px-8 py-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-xl font-semibold text-lg
-                   hover:from-orange-500 hover:to-orange-600 transition-all duration-300 transform hover:scale-105
-                   focus:outline-none focus:ring-4 focus:ring-orange-400 shadow-lg hover:shadow-xl
-                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-orange-400 to-orange-500 text-white rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg
+                   active:from-orange-500 active:to-orange-600 transition-all duration-200 transform active:scale-95
+                   focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-lg touch-manipulation
+                   disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
         onClick={() => gameState.dispatch({ type: 'CLEAR_SELECTION' })}
         disabled={gameState.selectedWords.length === 0}
       >
@@ -407,10 +392,10 @@ const ActionButtons = ({ gameState }) => {
       </button>
       
       <button
-        className={`px-8 py-3 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl
-                   focus:outline-none focus:ring-4 focus:ring-blue-400
+        className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg transition-all duration-200 shadow-lg touch-manipulation
+                   focus:outline-none focus:ring-2 focus:ring-blue-400
                    ${gameState.canSubmit 
-                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transform hover:scale-110' 
+                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white active:from-blue-600 active:to-purple-700 transform active:scale-95' 
                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                    }`}
         onClick={gameState.submitGuess}
@@ -422,7 +407,7 @@ const ActionButtons = ({ gameState }) => {
   );
 };
 
-// CategoryReveal Component
+// Mobile-Friendly CategoryReveal Component
 const CategoryReveal = ({ category, index }) => {
   const colorClasses = {
     yellow: 'bg-gradient-to-r from-yellow-300 to-yellow-400 border-yellow-500 text-yellow-900',
@@ -438,16 +423,16 @@ const CategoryReveal = ({ category, index }) => {
   return (
     <div 
       className={`
-        p-6 rounded-xl border-2 text-center shadow-lg
-        animate-slideIn transform hover:scale-105 transition-all duration-300
+        p-4 sm:p-6 rounded-lg sm:rounded-xl border-2 text-center shadow-lg
+        animate-slideIn transform transition-all duration-300
         ${colorClasses[category.color]}
       `}
       style={{ animationDelay: `${index * 0.3}s` }}
     >
-      <h3 className="font-bold text-lg mb-3">{category.name}</h3>
-      <div className="flex justify-center flex-wrap gap-2 text-lg font-semibold">
+      <h3 className="font-bold text-base sm:text-lg mb-2 sm:mb-3">{category.name}</h3>
+      <div className="flex justify-center flex-wrap gap-1 sm:gap-2 text-sm sm:text-lg font-semibold">
         {category.words.map((word, i) => (
-          <span key={word} className="bg-white bg-opacity-50 px-3 py-1 rounded-lg">
+          <span key={word} className="bg-white bg-opacity-50 px-2 sm:px-3 py-1 rounded-md sm:rounded-lg">
             {word}
           </span>
         ))}
@@ -456,7 +441,7 @@ const CategoryReveal = ({ category, index }) => {
   );
 };
 
-// AnniversaryReveal Component
+// Mobile-Friendly AnniversaryReveal Component
 const AnniversaryReveal = () => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -473,25 +458,25 @@ const AnniversaryReveal = () => {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 rounded-2xl p-10 text-center border-2 border-pink-300 shadow-2xl transform animate-slideIn">
+    <div className="bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 rounded-lg sm:rounded-2xl p-6 sm:p-10 text-center border-2 border-pink-300 shadow-2xl transform animate-slideIn mx-2">
       {currentStep >= 1 && (
-        <h2 className="text-4xl md:text-5xl font-bold text-rose-800 mb-6 animate-fadeIn">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-rose-800 mb-4 sm:mb-6 animate-fadeIn">
           🎉 Congratulations! 🎉
         </h2>
       )}
       
       {currentStep >= 2 && (
-        <p className="text-2xl text-rose-700 mb-8 animate-fadeIn font-semibold" style={{ animationDelay: '0.5s' }}>
+        <p className="text-lg sm:text-2xl text-rose-700 mb-6 sm:mb-8 animate-fadeIn font-semibold" style={{ animationDelay: '0.5s' }}>
           Here's to a great year with you
         </p>
       )}
       
       {currentStep >= 3 && (
-        <div className="bg-white rounded-xl p-8 mb-8 shadow-xl animate-fadeIn transform hover:scale-105 transition-all duration-300" style={{ animationDelay: '1s' }}>
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+        <div className="bg-white rounded-lg sm:rounded-xl p-6 sm:p-8 mb-6 sm:mb-8 shadow-xl animate-fadeIn transform transition-all duration-300" style={{ animationDelay: '1s' }}>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">
             Our Anniversary Date ✨
           </h3>
-          <div className="space-y-4 text-xl">
+          <div className="space-y-3 sm:space-y-4 text-base sm:text-xl">
             <p className="text-gray-700">
               🥩 <strong>Dinner at "Steak and Lobster" - Temple Bar</strong>
             </p>
@@ -509,16 +494,16 @@ const AnniversaryReveal = () => {
       )}
       
       {currentStep >= 4 && (
-        <p className="text-2xl text-rose-600 font-bold mb-4">
+        <p className="text-lg sm:text-2xl text-rose-600 font-bold mb-4">
           Danny, I love you to the moon and back! 🌙✨
         </p>
       )}
 
       {currentStep >= 5 && (
         <button 
-          className="px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-bold text-xl
-                     hover:from-pink-600 hover:to-rose-600 transition-all duration-300 transform hover:scale-110
-                     focus:outline-none focus:ring-4 focus:ring-pink-400 shadow-lg"
+          className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg sm:rounded-xl font-bold text-lg sm:text-xl
+                     active:from-pink-600 active:to-rose-600 transition-all duration-300 transform active:scale-95
+                     focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-lg touch-manipulation"
           onClick={() => window.location.reload()}
         >
           🎮 Play Again
@@ -528,21 +513,21 @@ const AnniversaryReveal = () => {
   );
 };
 
-// Main GameContainer Component
+// Mobile-Friendly GameContainer Component
 const GameContainer = () => {
   const gameState = useGameState();
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-3 sm:p-6">
       <Header 
         mistakes={gameState.mistakes} 
         solvedCount={gameState.solvedCategories.length}
         totalCategories={gameState.categories.length}
       />
       
-      <div className="bg-white rounded-2xl shadow-2xl p-8 mb-8 border border-gray-200">
+      <div className="bg-white rounded-lg sm:rounded-2xl shadow-xl sm:shadow-2xl p-4 sm:p-8 mb-4 sm:mb-8 border border-gray-200">
         {/* Solved Categories */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-8">
           {gameState.solvedCategories.map((category, index) => (
             <CategoryReveal 
               key={category.id} 
@@ -555,7 +540,7 @@ const GameContainer = () => {
         {/* Game Grid */}
         {!gameState.gameComplete && (
           <>
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
               {gameState.words.map(({ word, categoryId, color }) => (
                 <WordCard
                   key={word}
@@ -590,7 +575,7 @@ const GameContainer = () => {
 // Main App Component
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-25 to-pink-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-25 to-pink-50 py-4 sm:py-8">
       <GameContainer />
     </div>
   );
