@@ -1,4 +1,4 @@
-/* index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,13 +29,13 @@
   }
 }
 
-/* Focus styles for accessibility */
+
 button:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* Shake animation for wrong guesses */
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }

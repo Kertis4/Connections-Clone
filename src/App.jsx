@@ -309,7 +309,7 @@ const Header = ({ mistakes, solvedCount, totalCategories }) => {
   );
 };
 
-// Mobile-Friendly WordCard Component
+// WordCard Component
 const WordCard = ({ word, isSelected, isDisabled, onClick, showShake }) => {
   return (
     <button
